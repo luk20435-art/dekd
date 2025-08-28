@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html lang="th">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>เว็บควบคุมน้ำหนัก</title>
+
+<!-- โหลดฟอนต์ Google Fonts -->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+  body {
+
+    font-family: 'Prompt', 'Inter', sans-serif;
+
+    background: linear-gradient(135deg, #f0f4f8, #e8f9f6);
+
+    margin: 0; padding: 20px; color: #333;
+
+  }
+
+  .container {
+
+    max-width: 900px;
+
+    margin: auto;
+
+    background: #fff;
+
+    padding: 25px 30px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+
+  }
+
+  h1, h2, h3 {
+
+    text-align: center;
+
+    color: #2a9d8f;
+
+  }
+
+  label {
+
+    display: block;
+
+    margin: 10px 0 5px;
+
+    font-weight: 600;
+
+  }
+
+  input, select, button {
+
+    width: 100%;
+
+    padding: 10px;
+
+    margin-bottom: 15px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 10px;
+
+    font-size: 1rem;
+
+    font-family: inherit;
+
+  }
+
+  button {
+
+    background: #2a9d8f;
+
+    color: black;
+
+    border: none;
+
+    cursor: pointer;
+
+    transition: background 0.3s ease, transform 0.2s;
+
+  }
+
+  button:hover {
+
+    background: #1f796d;
+
+    transform: translateY(-2px);
+
+  }
+
+  .result {
+
+    background: #e0f7f1;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    margin-top: 25px;
+
+  }
+
+  .language-switcher {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+  }
+
+  .lang-label {
+
+    font-weight: bold;
+
+  }
+
+  .lang-btn {
+
+    padding: 6px 14px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    background: white;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+  }
+
+  .lang-btn.active {
+
+    background: #2a9d8f;
+
+    color: white;
+
+    border-color: #1f796d;
+
+  }
+
+  table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 15px;
+
+  }
+
+  th, td {
+
+    border: 1px solid #aaa;
+
+    padding: 8px 10px;
+
+    text-align: center;
+
+  }
+
+  th {
+
+    background-color: #2a9d8f;
+
+    color: white;
+
+  }
+
+  /* ⭐ รีวิวดาว */
+
+  .review {
+
+    text-align: center;
+
+    margin-top: 20px;
+
+  }
+
+  .stars {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 2rem;
+
+    cursor: pointer;
+
+  }
+
+  .star {
+
+    color: #ccc;
+
+    transition: color 0.3s;
+
+  }
+
+  .star.active {
+
+    color: gold;
+
+  }
+
+  #review-text {
+
+    margin-top: 10px;
+
+    font-weight: bold;
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="language-switcher">
+
+    <span class="lang-label" id="lang-label">ภาษา:</span>
+
+    <button class="lang-btn active" onclick="switchLanguage('th')">ไทย</button>
+
+    <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+
+  </div>
+
+  <h1 data-th="โปรแกรมคำนวณ BMI พร้อมแนะนำอาหารและออกกำลังกาย" data-en="BMI Calculator with Food & Exercise Suggestions">โปรแกรมคำนวณ BMI พร้อมแนะนำอาหารและออกกำลังกาย</h1>
+
+  <label data-th="เพศ" data-en="Gender">เพศ</label>
+
+  <select id="gender">
+
+    <option value="male" data-th="ชาย" data-en="Male">ชาย</option>
+
+    <option value="female" data-th="หญิง" data-en="Female">หญิง</option>
+
+  </select>
+
+  <label data-th="น้ำหนัก (กิโลกรัม)" data-en="Weight (kg)">น้ำหนัก (กิโลกรัม)</label>
+
+  <input type="number" id="weight" placeholder="เช่น 60" />
+
+  <label data-th="ส่วนสูง (เซนติเมตร)" data-en="Height (cm)">ส่วนสูง (เซนติเมตร)</label>
+
+  <input type="number" id="height" placeholder="เช่น 165" />
+
+  <label data-th="คุณออกกำลังกายไหม" data-en="Do you exercise?">คุณออกกำลังกายไหม</label>
+
+  <select id="exercise">
+
+    <option value="none" data-th="ไม่ออกกำลังกาย" data-en="No Exercise">ไม่ออกกำลังกาย</option>
+
+    <option value="light" data-ออกกำลังกาย1-2ชั่วโมง" data-en="Light Exercise">ออกกำลังกาย1-2ชั่วโมง</option>
+
+    <option value="moderate" data-th="ออกกำลังกาย3-5ชั่วโมง" data-en="Moderate Exercise">ออกกำลังกาย3-5ชั่วโมง</option>
+
+    <option value="heavy" data-th="ออกกำลังกาย8ชั่วโมงขึ้นไป" data-en="Heavy Exercise">ออกกำลังกาย8ชั่วโมงขึ้นไป</option>
+
+  </select>
+
+  <button onclick="calculate()" data-th="คำนวณ" data-en="Calculate">คำนวณ</button>
+
+  <div id="result" class="result" style="display:none;"></div>
+
+  <!-- ⭐ ระบบรีวิว -->
+
+  <div class="review">
+
+    <h3 data-th="ให้คะแนนเว็บไซต์" data-en="Rate this Website">ให้คะแนนเว็บไซต์</h3>
+
+    <div class="stars" id="stars">
+
+      <span class="star" data-value="1">★</span>
+
+      <span class="star" data-value="2">★</span>
+
+      <span class="star" data-value="3">★</span>
+
+      <span class="star" data-value="4">★</span>
+
+      <span class="star" data-value="5">★</span>
+
+    </div>
+
+    <div id="review-text"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+let currentLang = 'th';
+
+const foods = [
+
+  { th: "ข้าวผัดกะเพราไก่", en: "Fried Rice with Basil Chicken", cal: 550, price: 45 },
+
+  { th: "ต้มยำกุ้ง", en: "Tom Yum Goong", cal: 350, price: 60 },
+
+  { th: "ผัดไทยกุ้งสด", en: "Pad Thai with Shrimp", cal: 600, price: 50 },
+
+  { th: "ส้มตำไทย", en: "Papaya Salad", cal: 180, price: 35 },
+
+  { th: "แกงเขียวหวานไก่", en: "Green Curry Chicken", cal: 450, price: 55 },
+
+  { th: "ข้าวมันไก่", en: "Hainanese Chicken Rice", cal: 650, price: 50 },
+
+  { th: "ข้าวหมูแดง", en: "BBQ Pork with Rice", cal: 580, price: 45 },
+
+  { th: "ข้าวหมูกรอบ", en: "Crispy Pork with Rice", cal: 700, price: 55 },
+
+  { th: "ก๋วยเตี๋ยวเรือ", en: "Boat Noodles", cal: 400, price: 40 },
+
+  { th: "ก๋วยเตี๋ยวต้มยำ", en: "Tom Yum Noodles", cal: 450, price: 45 },
+
+  { th: "ผัดซีอิ๊ว", en: "Stir-fried Noodles with Soy Sauce", cal: 500, price: 40 },
+
+  { th: "ผัดผักรวม", en: "Stir-fried Mixed Vegetables", cal: 250, price: 35 },
+
+  { th: "ข้าวหน้าเป็ด", en: "Roast Duck with Rice", cal: 650, price: 55 },
+
+  { th: "ข้าวหน้าไก่เทริยากิ", en: "Teriyaki Chicken Rice Bowl", cal: 600, price: 50 },
+
+  { th: "ข้าวแกงกะหรี่ไก่", en: "Chicken Curry Rice", cal: 550, price: 50 },
+
+  { th: "แกงจืดเต้าหู้หมูสับ", en: "Pork Tofu Soup", cal: 180, price: 40 },
+
+  { th: "ต้มจืดหมูสับสาหร่าย", en: "Pork Seaweed Soup", cal: 200, price: 40 },
+
+  { th: "ผัดมาม่าผักรวม", en: "Instant Noodles Stir-fried with Vegetables", cal: 450, price: 35 },
+
+  { th: "ข้าวอบไก่", en: "Baked Chicken Rice", cal: 550, price: 50 },
+
+  { th: "ข้าวหน้าไข่ข้นปู", en: "Crab Omelet Rice", cal: 650, price: 60 },
+
+  { th: "ข้าวผัดปู", en: "Crab Fried Rice", cal: 600, price: 55 },
+
+  { th: "ข้าวผัดกุ้ง", en: "Shrimp Fried Rice", cal: 600, price: 50 },
+
+  { th: "ไข่เจียวหมูสับ", en: "Thai Omelet with Minced Pork", cal: 400, price: 35 },
+
+  { th: "ไข่ตุ๋น", en: "Steamed Egg", cal: 250, price: 30 },
+
+  { th: "ข้าวผัดปลาเค็ม", en: "Salted Fish Fried Rice", cal: 550, price: 50 },
+
+  { th: "แกงป่าปลา", en: "Jungle Curry with Fish", cal: 500, price: 60 },
+
+  { th: "แกงส้มชะอมกุ้ง", en: "Sour Curry with Acacia Omelet and Shrimp", cal: 400, price: 55 },
+
+  { th: "ยำวุ้นเส้น", en: "Spicy Glass Noodle Salad", cal: 350, price: 45 },
+
+  { th: "ยำปลากรอบ", en: "Crispy Fish Salad", cal: 400, price: 50 },
+
+  { th: "ไก่ทอดสมุนไพร", en: "Herb Fried Chicken", cal: 600, price: 55 },
+
+  { th: "หมูทอดกระเทียม", en: "Garlic Pork", cal: 550, price: 50 },
+
+  { th: "กุ้งอบวุ้นเส้น", en: "Baked Shrimp with Glass Noodles", cal: 500, price: 60 },
+
+  { th: "หมูสะเต๊ะ", en: "Pork Satay", cal: 400, price: 40 },
+
+  { th: "ไก่ย่าง", en: "Grilled Chicken", cal: 450, price: 50 },
+
+  { th: "ปลาทอดน้ำปลา", en: "Fried Fish with Fish Sauce", cal: 550, price: 60 },
+
+  { th: "แกงไตปลา", en: "Southern Spicy Fish Kidney Curry", cal: 500, price: 55 },
+
+  { th: "แกงเหลืองปลากะพง", en: "Yellow Curry with Sea Bass", cal: 480, price: 60 },
+
+  { th: "ต้มโคล้งปลากรอบ", en: "Spicy Sour Soup with Crispy Fish", cal: 400, price: 50 },
+
+  { th: "ผัดฉ่าทะเล", en: "Spicy Stir-fried Seafood", cal: 550, price: 60 },
+
+  { th: "ผัดพริกแกงไก่", en: "Chicken Stir-fried with Curry Paste", cal: 500, price: 50 },
+
+  { th: "ผัดพริกแกงหมู", en: "Pork Stir-fried with Curry Paste", cal: 500, price: 50 },
+
+  { th: "ผัดกะเพราทะเล", en: "Seafood Basil Stir-fry", cal: 550, price: 60 },
+
+  { th: "สปาเกตตีผัดขี้เมา", en: "Drunken Spaghetti", cal: 600, price: 65 },
+
+  { th: "สปาเกตตีคาโบนาร่า", en: "Carbonara Spaghetti", cal: 650, price: 65 },
+
+  { th: "พิซซ่าแฮมชีส", en: "Ham & Cheese Pizza", cal: 700, price: 90 },
+
+  { th: "พิซซ่าซีฟู้ด", en: "Seafood Pizza", cal: 750, price: 95 },
+
+  { th: "เบอร์เกอร์หมู", en: "Pork Burger", cal: 650, price: 70 },
+
+  { th: "เบอร์เกอร์ไก่", en: "Chicken Burger", cal: 600, price: 65 },
+
+  { th: "เบอร์เกอร์เนื้อ", en: "Beef Burger", cal: 700, price: 75 },
+
+  { th: "แซนด์วิชทูน่า", en: "Tuna Sandwich", cal: 450, price: 50 },
+
+  { th: "แซนด์วิชไก่", en: "Chicken Sandwich", cal: 500, price: 50 },
+
+  { th: "ขนมปังหน้าหมู", en: "Pork Toast", cal: 400, price: 40 },
+
+  { th: "ขนมปังหน้าปู", en: "Crab Toast", cal: 450, price: 50 },
+
+  { th: "โรตีแกงเขียวหวาน", en: "Roti with Green Curry", cal: 600, price: 50 },
+
+  { th: "โรตีแกงไก่", en: "Roti with Chicken Curry", cal: 550, price: 50 },
+
+  { th: "ข้าวคลุกกะปิ", en: "Rice with Shrimp Paste", cal: 600, price: 50 },
+
+  { th: "ข้าวผัดน้ำพริกลงเรือ", en: "Rice with Chili Paste Fried Rice", cal: 650, price: 50 },
+
+  { th: "น้ำพริกกะปิผักต้ม", en: "Shrimp Paste Chili with Boiled Veggies", cal: 200, price: 35 },
+
+  { th: "น้ำพริกอ่อง", en: "Northern Thai Chili Dip", cal: 180, price: 35 },
+
+  { th: "น้ำพริกหนุ่ม", en: "Northern Thai Young Chili Dip", cal: 180, price: 35 },
+
+  { th: "ไส้อั่ว", en: "Northern Thai Sausage", cal: 250, price: 40 },
+
+  { th: "ลาบหมู", en: "Spicy Minced Pork Salad", cal: 300, price: 40 },
+
+  { th: "ลาบไก่", en: "Spicy Minced Chicken Salad", cal: 280, price: 40 },
+
+  { th: "น้ำตกหมู", en: "Spicy Grilled Pork Salad", cal: 300, price: 40 },
+
+  { th: "น้ำตกเนื้อ", en: "Spicy Grilled Beef Salad", cal: 350, price: 50 },
+
+  { th: "ตับหวาน", en: "Spicy Liver Salad", cal: 250, price: 40 },
+
+  { th: "ก้อยปลา", en: "Spicy Raw Fish Salad", cal: 200, price: 45 },
+
+  { th: "กุ้งแช่น้ำปลา", en: "Shrimp in Fish Sauce", cal: 350, price: 50 },
+
+  { th: "ปูม้านึ่ง", en: "Steamed Blue Crab", cal: 300, price: 100 },
+
+  { th: "หอยแครงลวก", en: "Boiled Cockles", cal: 250, price: 50 },
+
+  { th: "หอยนางรมสด", en: "Fresh Oysters", cal: 150, price: 60 },
+
+  { th: "สลัดผักรวม", en: "Mixed Vegetable Salad", cal: 200, price: 40 },
+
+  { th: "สลัดทูน่า", en: "Tuna Salad", cal: 250, price: 50 },
+
+  { th: "สลัดไก่ย่าง", en: "Grilled Chicken Salad", cal: 300, price: 50 },
+
+  { th: "น้ำผลไม้รวม", en: "Mixed Fruit Juice", cal: 120, price: 30 },
+
+  { th: "สมูทตี้กล้วย", en: "Banana Smoothie", cal: 180, price: 40 },
+
+  { th: "สมูทตี้สตรอเบอร์รี่", en: "Strawberry Smoothie", cal: 200, price: 45 },
+
+  { th: "ชาเย็น", en: "Thai Iced Tea", cal: 180, price: 25 },
+
+  { th: "กาแฟเย็น", en: "Iced Coffee", cal: 150, price: 25 },
+
+  { th: "นมสดเย็น", en: "Iced Milk", cal: 120, price: 20 },
+
+  { th: "ขนมถ้วย", en: "Thai Custard Dessert", cal: 150, price: 20 },
+
+  { th: "ขนมชั้น", en: "Layered Thai Dessert", cal: 160, price: 20 },
+
+  { th: "ข้าวเหนียวมะม่วง", en: "Mango Sticky Rice", cal: 450, price: 60 },
+
+  { th: "ลอดช่องน้ำกะทิ", en: "Lod Chong with Coconut Milk", cal: 300, price: 40 },
+
+  { th: "บัวลอยน้ำขิง", en: "Glutinous Rice Balls in Ginger Soup", cal: 250, price: 40 },
+
+  { th: "ทองหยิบ", en: "Thong Yip", cal: 100, price: 15 },
+
+  { th: "ทองหยอด", en: "Thong Yod", cal: 100, price: 15 },
+
+  { th: "ฝอยทอง", en: "Foi Thong", cal: 120, price: 20 },
+
+  { th: "ขนมเปี๊ยะ", en: "Mooncake", cal: 200, price: 25 },
+
+  { th: "ขนมโป๊งเหน่ง", en: "Pong Nang", cal: 180, price: 20 },
+
+  { th: "ช็อกโกแลตเค้ก", en: "Chocolate Cake", cal: 400, price: 70 },
+
+  { th: "ครีมพาย", en: "Cream Pie", cal: 350, price: 65 },
+
+  { th: "ไอศกรีมวานิลลา", en: "Vanilla Ice Cream", cal: 200, price: 40 },
+
+  { th: "ไอศกรีมช็อกโกแลต", en: "Chocolate Ice Cream", cal: 220, price: 45 },
+
+  { th: "แพนเค้ก", en: "Pancake", cal: 300, price: 50 },
+
+  { th: "วาฟเฟิล", en: "Waffle", cal: 350, price: 55 },
+
+  { th: "เครป", en: "Crepe", cal: 300, price: 50 },
+
+  { th: "ขนมปังปิ้งเนย", en: "Butter Toast", cal: 200, price: 20 },
+
+  { th: "ขนมปังปิ้งแยม", en: "Jam Toast", cal: 220, price: 25 },
+
+  { th: "ข้าวโอ๊ต", en: "Oatmeal", cal: 150, price: 30 },
+
+  { th: "โยเกิร์ตผลไม้", en: "Fruit Yogurt", cal: 180, price: 35 },
+
+  { th: "ซุปฟักทอง", en: "Pumpkin Soup", cal: 200, price: 40 },
+
+  { th: "ซุปข้าวโพด", en: "Corn Soup", cal: 180, price: 40 }
+
+];
+
+const exercises = {
+
+  underweight: { th: ["โยคะเบาๆ","ยกน้ำหนักเล็กน้อย","ท่า Plank 30 วินาที"], en: ["Light Yoga","Light Weight Training","Plank 30s"] },
+
+  normal: { th: ["วิ่ง 30 นาที","วิดพื้น 3 เซ็ต","กระโดดเชือก 10 นาที"], en: ["Run 30 mins","Push-ups (3 sets)","Jump rope 10 mins"] },
+
+  overweight: { th: ["เดินเร็ว 45 นาที","Squat 20 ครั้ง","จักรยานอากาศ 15 นาที"], en: ["Fast Walk 45 mins","Squats x20","Bicycle Crunch 15 mins"] },
+
+  obese: { th: ["เดินช้า + ยืดกล้ามเนื้อ","ว่ายน้ำ 30 นาที","ท่า Step-up"], en: ["Slow walk + stretching","Swimming 30 mins","Step-up exercise"] }
+
+};
+
+const detailedAdviceData = {
+
+  underweight: {
+
+    th: { general: "คุณน้ำหนักต่ำกว่ามาตรฐาน ควรเน้นอาหารที่มีโปรตีนและไขมันดี พร้อมออกกำลังกายเบา ๆ เพื่อเสริมกล้ามเนื้อ", foods:["เนื้อไก่","ไข่","ปลาแซลมอน","ถั่ว","นมเต็มไขมัน"], exercises:["โยคะเบาๆ","ยกน้ำหนักเล็กน้อย","ท่า Plank 30 วินาที"] },
+
+    en: { general: "You are underweight. Focus on protein and healthy fats, with light exercise to build muscle.", foods:["Chicken","Eggs","Salmon","Nuts","Full-fat Milk"], exercises:["Light Yoga","Light Weight Training","Plank 30s"] }
+
+  },
+
+  normal: {
+
+    th: { general: "คุณน้ำหนักอยู่ในเกณฑ์ปกติ รักษาน้ำหนักด้วยอาหารหลากหลายและออกกำลังกายสม่ำเสมอ", foods:["ผักผลไม้","ข้าวกล้อง","ปลา","ไก่","ถั่ว"], exercises:["วิ่ง 30 นาที","วิดพื้น 3 เซ็ต","กระโดดเชือก 10 นาที"] },
+
+    en: { general: "You have a normal weight. Maintain it with balanced meals and regular exercise.", foods:["Vegetables & Fruits","Brown Rice","Fish","Chicken","Nuts"], exercises:["Run 30 mins","Push-ups (3 sets)","Jump rope 10 mins"] }
+
+  },
+
+  overweight: {
+
+    th: { general: "คุณมีน้ำหนักเกิน ควรลดอาหารหวานและของทอด เพิ่มผักผลไม้และโปรตีน", foods:["ผัก","ผลไม้","ข้าวกล้อง","ปลา","ไก่ไม่ติดหนัง"], exercises:["เดินเร็ว 45 นาที","Squat 20 ครั้ง","จักรยานอากาศ 15 นาที"] },
+
+    en: { general: "You are overweight. Reduce sweets and fried foods, increase vegetables, fruits, and protein.", foods:["Vegetables","Fruits","Brown Rice","Fish","Skinless Chicken"], exercises:["Fast Walk 45 mins","Squats x20","Bicycle Crunch 15 mins"] }
+
+  },
+
+  obese: {
+
+    th: { general: "คุณอยู่ในภาวะอ้วนมาก แนะนำปรึกษาแพทย์/นักโภชนาการ พร้อมออกกำลังกายเบา ๆ", foods:["ผักใบเขียว","ผลไม้ไม่หวาน","ปลา","โปรตีนไม่ติดมัน"], exercises:["เดินช้า + ยืดกล้ามเนื้อ","ว่ายน้ำ 30 นาที","ท่า Step-up"] },
+
+    en: { general: "You are obese. Consult a doctor/nutritionist and do light exercise.", foods:["Leafy Greens","Low-sugar Fruits","Fish","Lean Protein"], exercises:["Slow walk + stretching","Swimming 30 mins","Step-up exercise"] }
+
+  }
+
+};
+
+function switchLanguage(lang) {
+
+  currentLang = lang;
+
+  document.querySelectorAll('[data-th]').forEach(el => {
+
+    el.innerText = (lang==='th')?el.dataset.th:el.dataset.en;
+
+  });
+
+  document.getElementById('lang-label').innerText = (lang==='th')?'ภาษา:':'Language:';
+
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(lang));
+
+  });
+
+  document.getElementById('result').style.display='none';
+
+}
+
+function calculate() {
+
+  const weight = parseFloat(document.getElementById('weight').value);
+
+  const height = parseFloat(document.getElementById('height').value)/100;
+
+  if(!weight||!height||height===0){ alert(currentLang==='th'?'กรุณากรอกน้ำหนักและส่วนสูงให้ถูกต้อง':'Please enter valid weight and height'); return; }
+
+  const bmi = weight/(height*height);
+
+  let statusKey='', statusText='';
+
+  if(bmi<18.5){ statusKey='underweight'; statusText=currentLang==='th'?'น้ำหนักน้อย':'Underweight'; }
+
+  else if(bmi<24.9){ statusKey='normal'; statusText=currentLang==='th'?'ปกติ':'Normal'; }
+
+  else if(bmi<29.9){ statusKey='overweight'; statusText=currentLang==='th'?'น้ำหนักเกิน':'Overweight'; }
+
+  else{ statusKey='obese'; statusText=currentLang==='th'?'อ้วนมาก':'Obese'; }
+
+  const bmiExplanation=currentLang==='th'?'BMI คือ ดัชนีมวลกาย ใช้ประเมินภาวะน้ำหนักของคุณ':'BMI is the Body Mass Index used to assess your weight status';
+
+  // ตารางอาหารสุ่ม 5 เมนู
+
+  let foodTable=`<h3>${currentLang==='th'?'แนะนำอาหาร':'Food Suggestions'}</h3><table><tr><th>${currentLang==='th'?'เมนูอาหาร':'Food'}</th><th>${currentLang==='th'?'แคลอรี่ (kcal)':'Calories (kcal)'}</th><th>${currentLang==='th'?'ราคา (บาท)':'Price (THB)'}</th></tr>`;
+
+  const randomFoods = foods.sort(()=>0.5-Math.random()).slice(0,5);
+
+  randomFoods.forEach(f=>foodTable+=`<tr><td>${f[currentLang]}</td><td>${f.cal}</td><td>${f.price}</td></tr>`);
+
+  foodTable+='</table>';
+
+  // ท่าออกกำลังกาย
+
+  let exList=`<h3>${currentLang==='th'?'ท่าออกกำลังกายที่เหมาะสม':'Recommended Exercises'}</h3><ul>`;
+
+  exercises[statusKey][currentLang].forEach(ex=>exList+=`<li>${ex}</li>`);
+
+  exList+='</ul>';
+
+  // คำแนะนำเจาะลึก
+
+  const detailed=detailedAdviceData[statusKey][currentLang];
+
+  let detailedHtml=`<h3>${currentLang==='th'?'คำแนะนำเจาะลึก':'Detailed Advice'}</h3>
+
+    <p><strong>${currentLang==='th'?'คำแนะนำทั่วไป:':'General Advice:'}</strong> ${detailed.general}</p>
+
+    <p><strong>${currentLang==='th'?'อาหารแนะนำ:':'Recommended Foods:'}</strong></p>
+
+    <ul>${detailed.foods.map(f=>`<li>${f}</li>`).join('')}</ul>
+
+    <p><strong>${currentLang==='th'?'ท่าออกกำลังกาย:':'Recommended Exercises:'}</strong></p>
+
+    <ul>${detailed.exercises.map(e=>`<li>${e}</li>`).join('')}</ul>`;
+
+  document.getElementById('result').style.display='block';
+
+  document.getElementById('result').innerHTML=`
+
+    <h2>${currentLang==='th'?'ผลลัพธ์':'Result'}</h2>
+
+    <p>${currentLang==='th'?'ค่า BMI ของคุณคือ':'Your BMI is'}: <strong>${bmi.toFixed(2)}</strong> (${statusText})</p>
+
+    <p><em>${bmiExplanation}</em></p>
+
+    ${foodTable}
+
+    ${exList}
+
+    ${detailedHtml}`;
+
+}
+
+// ⭐ ระบบรีวิว
+
+const stars=document.querySelectorAll('.star');
+
+const reviewText=document.getElementById('review-text');
+
+stars.forEach(star=>{star.addEventListener('click',()=>{
+
+  let value=star.getAttribute('data-value');
+
+  stars.forEach(s=>s.classList.remove('active'));
+
+  for(let i=0;i<value;i++){stars[i].classList.add('active');}
+
+  reviewText.innerText=(currentLang==='th'?"คุณให้คะแนน: ":"You rated: ")+value+" / 5";
+
+})});
+
+</script>
+
+</body>
+
+</html>
